@@ -724,6 +724,13 @@
     error-stack-parser "^2.0.0"
     string-width "^2.0.0"
 
+"@tailwindcss/custom-forms@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/custom-forms/-/custom-forms-0.1.4.tgz#50a082fd8fd54b515a361bd793e7f3631cbfa380"
+  integrity sha512-j9BTAVjZneABnaK1M/sjgP8rQPwprunOsNMm3TbnpkJfXtVlSkmiDAIUAJFgRxKu/xGz7M3smB6FaoAzSK/lfQ==
+  dependencies:
+    mini-svg-data-uri "^1.0.3"
+
 "@types/events@*":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@types/events/-/events-3.0.0.tgz#2862f3f58a9a7f7c3e78d79f130dd4d71c25c2a7"
@@ -4995,6 +5002,11 @@ mini-css-extract-plugin@^0.6.0:
     normalize-url "^2.0.1"
     schema-utils "^1.0.0"
     webpack-sources "^1.1.0"
+
+mini-svg-data-uri@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/mini-svg-data-uri/-/mini-svg-data-uri-1.0.3.tgz#f8bb0d7afbf3de29152aadd0f47701197ceab4a3"
+  integrity sha512-YBaqsh6GE+4jQhLNkFYEagH2o4bVTlGGpEvkuwtwc+1NBGXqpcVCnsUGkGp75ovPXxtF2GsDYzUwyhfC0hntiA==
 
 minimalistic-assert@^1.0.0, minimalistic-assert@^1.0.1:
   version "1.0.1"
