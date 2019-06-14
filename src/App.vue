@@ -9,7 +9,7 @@
       </div>
       <div class="mt-6 sm:overflow-x-auto">
         <div class="px-4 sm:inline-flex sm:pb-8">
-          <div v-for="i in 4" :class="{'mt-10 sm:ml-4': i > 1 }" class="sm:mt-0 sm:max-w-xs sm:w-full sm:flex-shrink-0">
+          <div v-for="i in 4" :class="{'mt-10 sm:ml-4': i > 1 }" class="sm:mt-0 sm:w-80 sm:flex-shrink-0">
             <div class="relative pb-5/6">
               <img class="absolute inset-0 h-full rounded-lg shadow-md object-cover" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80" alt="">
             </div>
