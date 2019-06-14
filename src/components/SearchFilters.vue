@@ -7,7 +7,7 @@
         </div>
         <input class="block w-full bg-gray-900 focus:outline-none focus:bg-white focus:text-gray-900 text-white rounded-lg pl-10 pr-4 py-2" placeholder="Search by keywords">
       </div>
-      <button type="button" class="ml-4 inline-flex hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow pl-3 pr-4"
+      <button type="button" class="ml-4 inline-flex items-center hover:bg-gray-600 focus:outline-none focus:shadow-outline rounded-lg shadow pl-3 pr-4"
         @click="toggle"
         :class="{ 'bg-gray-600': isOpen, 'bg-gray-700': !isOpen }"
       >
