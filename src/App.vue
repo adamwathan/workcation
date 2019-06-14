@@ -15,7 +15,7 @@
             </div>
             <div class="relative px-4 -mt-16">
               <div class="bg-white rounded-lg px-4 py-4 shadow-lg">
-                <div class="flex">
+                <div class="flex items-baseline">
                   <span class="inline-block px-2 py-1 leading-none bg-teal-200 text-teal-800 rounded-full font-semibold uppercase tracking-wide text-xs">Plus</span>
                   <div class="ml-2 text-xs text-gray-600 font-semibold uppercase tracking-wide">
                     3 beds &bull; 2 baths
