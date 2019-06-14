@@ -1,6 +1,10 @@
 module.exports = {
   theme: {
-    extend: {},
+    extend: {
+      padding: {
+        '5/6': '83.3333333%'
+      }
+    },
     customForms: theme => ({
       // horizontalPadding: defaultTheme.spacing[3],
       // verticalPadding: defaultTheme.spacing[2],
