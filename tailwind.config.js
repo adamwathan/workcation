@@ -23,9 +23,16 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
     selectIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${defaultTheme.colors.gray[500]}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`,
     selectIconOffset: defaultTheme.spacing[2],
     selectIconSize: '1.5em',
+
+    textColor: defaultTheme.colors.gray[900],
+    focusTextColor: defaultTheme.colors.gray[900],
+
+    // Options to implement...
+    focusBackgroundColor: defaultTheme.colors.white,
+    placeholderColor: defaultTheme.colors.gray[600],
   }
 
-  Object.keys(theme('customForms', { default: {}})).forEach(modifier => {
+  Object.keys({ default: defaultOptions, ...theme('customForms', {}) }).forEach(modifier => {
     const suffix = modifier === 'default' ? '' : `-${modifier}`
     const options = { ...defaultOptions, ...theme('customForms')[modifier] }
 
@@ -51,6 +58,7 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
           boxShadow: options.focusBoxShadow,
         },
         '&:focus:not(:checked)': {
+          backgroundColor: options.focusBackgroundColor,
           borderColor: options.focusBorderColor,
         },
         '&:checked': {
@@ -92,6 +100,7 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
           boxShadow: options.focusBoxShadow,
         },
         '&:focus:not(:checked)': {
+          backgroundColor: options.focusBackgroundColor,
           borderColor: options.focusBorderColor,
         },
         '&:checked': {
@@ -114,6 +123,7 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
       },
       [`.form-input${suffix}, .form-textarea${suffix}, .form-multiselect${suffix}`]: {
         appearance: 'none',
+        color: options.textColor,
         backgroundColor: options.backgroundColor,
         borderColor: options.borderColor,
         borderWidth: options.borderWidth,
@@ -123,12 +133,15 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
         fontSize: options.fontSize,
         lineHeight: options.lineHeight,
         '&:focus': {
-          outline: 'none',
-          boxShadow: options.focusBoxShadow,
+          color: options.focusTextColor,
+          backgroundColor: options.focusBackgroundColor,
           borderColor: options.focusBorderColor,
+          boxShadow: options.focusBoxShadow,
+          outline: 'none',
         }
       },
       [`.form-select${suffix}`]: {
+        color: options.textColor,
         backgroundColor: options.backgroundColor,
         borderColor: options.borderColor,
         borderWidth: options.borderWidth,
@@ -157,9 +170,11 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
           paddingRight: options.horizontalPadding, // Fix padding for print in IE
         },
         '&:focus': {
-          outline: 'none',
-          boxShadow: options.focusBoxShadow,
+          color: options.focusTextColor,
+          backgroundColor: options.focusBackgroundColor,
           borderColor: options.focusBorderColor,
+          boxShadow: options.focusBoxShadow,
+          outline: 'none',
         }
       },
     })
@@ -181,9 +196,12 @@ module.exports = {
     customForms: theme => ({
       default: {
         lineHeight: theme('lineHeight.snug'),
+        textColor: theme('colors.white'),
+        focusTextColor: theme('colors.white'),
         borderColor: 'transparent',
         borderRadius: theme('borderRadius.lg'),
         backgroundColor: theme('colors.gray.700'),
+        focusBackgroundColor: theme('colors.gray.600'),
         focusBorderColor: 'transparent',
         focusBoxShadow: 'none',
         checkboxSize: '1.5em',
