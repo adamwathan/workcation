@@ -1,3 +1,4 @@
+const dlv = require('dlv')
 const svgToDataUri = require('mini-svg-data-uri')
 const defaultTheme = require('tailwindcss/resolveConfig')(require('tailwindcss/defaultConfig')).theme
 
@@ -8,27 +9,31 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
     verticalPadding: defaultTheme.spacing[2],
     lineHeight: defaultTheme.lineHeight.normal,
     fontSize: defaultTheme.fontSize.base,
+    textColor: defaultTheme.colors.gray[900],
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
     borderRadius: defaultTheme.borderRadius.default,
     backgroundColor: defaultTheme.colors.white,
+    boxShadow: defaultTheme.boxShadow.none,
+
+    focusTextColor: defaultTheme.colors.gray[900],
     focusBorderColor: defaultTheme.colors.blue[400],
     focusBoxShadow: defaultTheme.boxShadow.outline,
-    boxShadow: defaultTheme.boxShadow.none,
-    checkboxSize: '1em',
-    radioSize: '1em',
-    checkboxIcon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`,
-    radioIcon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`,
+    focusBackgroundColor: defaultTheme.colors.white,
+
     checkedColor: defaultTheme.colors.blue[500],
+    checkboxSize: '1em',
+    checkboxIcon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`,
+
+    radioSize: '1em',
+    radioIcon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`,
+
     selectIcon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${defaultTheme.colors.gray[500]}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`,
     selectIconOffset: defaultTheme.spacing[2],
     selectIconSize: '1.5em',
 
-    textColor: defaultTheme.colors.gray[900],
-    focusTextColor: defaultTheme.colors.gray[900],
 
     // Options to implement...
-    focusBackgroundColor: defaultTheme.colors.white,
     placeholderColor: defaultTheme.colors.gray[600],
   }
 
