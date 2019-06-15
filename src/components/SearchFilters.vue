@@ -106,7 +106,7 @@ export default {
   props: [],
   data() {
     return {
-      isOpen: true,
+      isOpen: false,
     }
   },
   methods: {
