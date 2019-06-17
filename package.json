@@ -10,6 +10,7 @@
   "dependencies": {
     "@tailwindcss/custom-forms": "^0.1.4",
     "core-js": "^2.6.5",
+    "lodash": "^4.17.11",
     "tailwindcss": "^1.0.4",
     "vue": "^2.6.10"
   },
