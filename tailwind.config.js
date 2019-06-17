@@ -37,6 +37,49 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
     placeholderColor: defaultTheme.colors.gray[600],
   }
 
+  const newOptions = {
+    default: {
+      padding: `${defaultTheme.spacing[2]} ${defaultTheme.spacing[3]}`,
+      lineHeight: defaultTheme.lineHeight.normal,
+      fontSize: defaultTheme.fontSize.base,
+      color: defaultTheme.colors.gray[900],
+      borderColor: defaultTheme.borderColor.default,
+      borderWidth: defaultTheme.borderWidth.default,
+      borderRadius: defaultTheme.borderRadius.default,
+      backgroundColor: defaultTheme.colors.white,
+      boxShadow: defaultTheme.boxShadow.none,
+      placeholder: {
+        color: defaultTheme.colors.gray[600],
+      },
+      focus: {
+        color: defaultTheme.colors.gray[900],
+        borderColor: defaultTheme.colors.blue[400],
+        boxShadow: defaultTheme.boxShadow.outline,
+        backgroundColor: defaultTheme.colors.white,
+      },
+      hover: {},
+      active: {},
+      checked: {
+        backgroundColor: defaultTheme.colors.blue[500],
+      },
+      checkbox: {
+        icon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`,
+        height: '1em',
+        width: '1em',
+      },
+      radio: {
+        icon: `<svg viewBox="0 0 16 16" fill="#fff" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`,
+        height: '1em',
+        width: '1em',
+      },
+      select: {
+        icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${defaultTheme.colors.gray[500]}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`,
+        backgroundSize: '1.5em 1.5em',
+        backgroundPosition: `right ${defaultTheme.spacing[2]} center`,
+      },
+    }
+  }
+
   Object.keys({ default: defaultOptions, ...theme('customForms', {}) }).forEach(modifier => {
     const suffix = modifier === 'default' ? '' : `-${modifier}`
     const options = { ...defaultOptions, ...theme('customForms')[modifier] }
@@ -44,12 +87,11 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
     addComponents({
       [`.form-checkbox${suffix}`]: {
         appearance: 'none',
-        boxShadow: options.boxShadow,
+        boxShadow: dlv(options, ['checkbox', 'boxShadow'], options.boxShadow),
         display: 'inline-block',
-        height: options.checkboxSize,
-        width: options.checkboxSize,
+        height: options.checkbox.height,
+        width: options.checkbox.width,
         verticalAlign: 'middle',
-        color: options.checkedColor,
         borderColor: options.borderColor,
         borderWidth: options.borderWidth,
         borderRadius: options.borderRadius,
@@ -60,7 +102,11 @@ const customForms = function ({ addUtilities, addComponents, theme }) {
         flexShrink: 0,
         '&:focus': {
           outline: 'none',
-          boxShadow: options.focusBoxShadow,
+          boxShadow: dlv(
+            options,
+            ['checkbox', 'focus', 'boxShadow'],
+            dlv(options, [])
+          ),
         },
         '&:focus:not(:checked)': {
           backgroundColor: options.focusBackgroundColor,
@@ -202,10 +248,10 @@ module.exports = {
       default: {
         lineHeight: theme('lineHeight.snug'),
         textColor: theme('colors.white'),
-        focusTextColor: theme('colors.white'),
         borderColor: 'transparent',
         borderRadius: theme('borderRadius.lg'),
         backgroundColor: theme('colors.gray.700'),
+        focusTextColor: theme('colors.white'),
         focusBackgroundColor: theme('colors.gray.600'),
         focusBorderColor: 'transparent',
         focusBoxShadow: 'none',
