@@ -1,6 +1,5 @@
 const svgToDataUri = require('mini-svg-data-uri')
 const mergeWith = require('lodash/mergeWith')
-const merge = require('lodash/merge')
 const isFunction = require('lodash/isFunction')
 const isArray = require('lodash/isArray')
 const isPlainObject = require('lodash/isPlainObject')
@@ -9,7 +8,8 @@ const defaultOptions = require('./defaultOptions')
 function merge(...objects) {
   return mergeWith({}, ...objects, (objValue, srcValue, key, obj, src, stack) => {
     if (isPlainObject(srcValue)) {
-      return mergeWith(objValue, srcValue, reininkMerge)
+      console.log(srcValue)
+      return mergeWith(objValue, srcValue, merge)
     }
     return Object.keys(src).includes(key)
       ? (srcValue === undefined ? null : srcValue)
@@ -26,6 +26,53 @@ function merge(...objects) {
 
 
 module.exports = function ({ addUtilities, addComponents, theme }) {
+  function addBaseComponents() {
+    addUtilities({
+      '.form-input': {
+        appearance: 'none',
+      },
+      '.form-textarea': {
+        appearance: 'none',
+      },
+      '.form-multiselect': {
+        appearance: 'none',
+      },
+      '.form-select': {
+        appearance: 'none',
+        colorAdjust: 'exact',
+        '&::-ms-expand': {
+          border: 'none', // The select padding is causing some whitespace around the chevron which looks weird with a border
+          '@media not print': {
+            display: 'none',
+          },
+        },
+      },
+      '.form-checkbox': {
+        appearance: 'none',
+        colorAdjust: 'exact',
+        '&::-ms-check': {
+          '@media not print': {
+            color: 'transparent', // Hide the check
+            background: 'inherit',
+            borderColor: 'inherit',
+            borderRadius: 'inherit',
+          }
+        },
+      },
+      '.form-radio': {
+        appearance: 'none',
+        colorAdjust: 'exact',
+        '&::-ms-check': {
+          '@media not print': {
+            color: 'transparent', // Hide the check
+            background: 'inherit',
+            borderColor: 'inherit',
+            borderRadius: 'inherit',
+          }
+        },
+      },
+    })
+  }
 
   function addInput(options, modifier = '') {
     const {
@@ -36,7 +83,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-input': {
+      [`.form-input${modifier}`]: {
         ...base,
         '&::placeholder': {
           ...placeholder,
@@ -66,7 +113,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-textarea': {
+      [`.form-textarea${modifier}`]: {
         ...base,
         '&::placeholder': {
           ...placeholder,
@@ -95,7 +142,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-multiselect': {
+      [`.form-multiselect${modifier}`]: {
         ...base,
         '&:hover': {
           ...hover,
@@ -117,15 +164,11 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-select': {
+      [`.form-select${modifier}`]: {
         backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`,
         ...base,
         '&::-ms-expand': {
-          border: 'none', // The select padding is causing some whitespace around the chevron which looks weird with a border
           color: iconColor, // Chevron color
-          '@media not print': {
-            display: 'none',
-          },
         },
         '@media print and (-ms-high-contrast: active), print and (-ms-high-contrast: none)': {
           paddingRight: base.paddingLeft, // Fix padding for print in IE
@@ -149,7 +192,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-checkbox': {
+      [`.form-checkbox${modifier}`]: {
         ...base,
         '&:hover': {
           ...hover,
@@ -169,10 +212,6 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
         },
         '&::-ms-check': {
           '@media not print': {
-            color: 'transparent', // Hide the check
-            background: 'inherit',
-            borderColor: 'inherit',
-            borderRadius: 'inherit',
             borderWidth: base.borderWidth,
           }
         },
@@ -189,7 +228,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     } = options
 
     addComponents({
-      '.form-radio': {
+      [`.form-radio${modifier}`]: {
         ...base,
         '&:hover': {
           ...hover,
@@ -209,10 +248,6 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
         },
         '&::-ms-check': {
           '@media not print': {
-            color: 'transparent', // Hide the check
-            background: 'inherit',
-            borderColor: 'inherit',
-            borderRadius: 'inherit',
             borderWidth: base.borderWidth,
           }
         },
@@ -220,11 +255,16 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     })
   }
 
-  addInput(merge(defaultOptions.input, theme('customForms.default.input', {})), '')
-  addTextarea(merge(defaultOptions.textarea, theme('customForms.default.textarea', {})), '')
-  addMultiselect(merge(defaultOptions.multiselect, theme('customForms.default.multiselect', {})), '')
-  addCheckbox(merge(defaultOptions.checkbox, theme('customForms.default.checkbox', {})), '')
-  addRadio(merge(defaultOptions.radio, theme('customForms.default.radio', {})), '')
-  addSelect(merge(defaultOptions.select, theme('customForms.default.select', {})), '')
+  addBaseComponents()
 
+  Object.keys(theme('customForms')).forEach(key => {
+    const modifier = key === 'default' ? '' : `-${key}`
+
+    addInput(merge(defaultOptions.input, theme(`customForms.${key}.input`, {})), modifier)
+    addTextarea(merge(defaultOptions.textarea, theme(`customForms.${key}.textarea`, {})), modifier)
+    addMultiselect(merge(defaultOptions.multiselect, theme(`customForms.${key}.multiselect`, {})), modifier)
+    addCheckbox(merge(defaultOptions.checkbox, theme(`customForms.${key}.checkbox`, {})), modifier)
+    addRadio(merge(defaultOptions.radio, theme(`customForms.${key}.radio`, {})), modifier)
+    addSelect(merge(defaultOptions.select, theme(`customForms.${key}.select`, {})), modifier)
+  })
 }

@@ -10,6 +10,22 @@ module.exports = {
       }
     },
     customForms: theme => ({
+      light: {
+        input: {
+          backgroundColor: theme('colors.white'),
+          borderColor: theme('borderColor.default'),
+          placeholder: {
+            color: theme('colors.gray.500'),
+          },
+          focus: {
+            borderColor: theme('colors.blue.400'),
+            boxShadow: theme('boxShadow.outline'),
+            placeholder: {
+              color: theme('colors.gray.500'),
+            },
+          }
+        }
+      },
       default: {
         input: {
           lineHeight: theme('lineHeight.snug'),

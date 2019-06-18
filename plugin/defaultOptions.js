@@ -2,7 +2,7 @@ const defaultTheme = require('tailwindcss/resolveConfig')(require('tailwindcss/d
 
 module.exports = {
   input: {
-    appearance: 'none',
+    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -25,7 +25,7 @@ module.exports = {
     hover: {},
   },
   textarea: {
-    appearance: 'none',
+    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -48,7 +48,7 @@ module.exports = {
     hover: {},
   },
   multiselect: {
-    appearance: 'none',
+    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -67,9 +67,9 @@ module.exports = {
     hover: {},
   },
   select: {
-    appearance: 'none',
+    // appearance: 'none',
+    // colorAdjust: 'exact',
     backgroundRepeat: 'no-repeat',
-    colorAdjust: 'exact',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -92,12 +92,12 @@ module.exports = {
     hover: {},
   },
   checkbox: {
-    appearance: 'none',
+    // appearance: 'none',
+    // colorAdjust: 'exact',
     display: 'inline-block',
     verticalAlign: 'middle',
     backgroundOrigin: 'border-box',
     userSelect: 'none',
-    colorAdjust: 'exact',
     flexShrink: 0,
     height: '1em',
     width: '1em',
@@ -122,16 +122,16 @@ module.exports = {
     },
   },
   radio: {
-    appearance: 'none',
+    // appearance: 'none',
+    // colorAdjust: 'exact',
     display: 'inline-block',
     verticalAlign: 'middle',
     backgroundOrigin: 'border-box',
     userSelect: 'none',
-    colorAdjust: 'exact',
     flexShrink: 0,
+    borderRadius: '100%',
     height: '1em',
     width: '1em',
-    borderRadius: '100%',
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
     backgroundColor: defaultTheme.colors.white,
