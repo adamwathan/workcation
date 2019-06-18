@@ -42,6 +42,14 @@
               <input class="mt-1 form-input block w-full" placeholder="Keywords">
             </label>
             <label class="mt-4 block w-full px-2 sm:mt-0 sm:w-1/2 lg:mt-4 lg:w-full">
+              <span class="text-sm font-semibold text-gray-500">Search</span>
+              <input class="mt-1 form-input form-input-light block w-full" placeholder="Keywords">
+            </label>
+            <label class="mt-4 block w-full px-2 sm:mt-0 sm:w-1/2 lg:mt-4 lg:w-full">
+              <span class="text-sm font-semibold text-gray-500">Search</span>
+              <input class="mt-1 form-input form-input-light form-input-sm block w-full" placeholder="Keywords">
+            </label>
+            <label class="mt-4 block w-full px-2 sm:mt-0 sm:w-1/2 lg:mt-4 lg:w-full">
               <span class="text-sm font-semibold text-gray-500">Long Form</span>
               <textarea class="mt-1 form-textarea block w-full" placeholder="Some longer form text"></textarea>
             </label>

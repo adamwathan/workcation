@@ -1,21 +1,10 @@
 const svgToDataUri = require('mini-svg-data-uri')
 const mergeWith = require('lodash/mergeWith')
+const isUndefined = require('lodash/isUndefined')
 const isFunction = require('lodash/isFunction')
 const isArray = require('lodash/isArray')
 const isPlainObject = require('lodash/isPlainObject')
 const defaultOptions = require('./defaultOptions')
-
-function merge(...objects) {
-  return mergeWith({}, ...objects, (objValue, srcValue, key, obj, src, stack) => {
-    if (isPlainObject(srcValue)) {
-      console.log(srcValue)
-      return mergeWith(objValue, srcValue, merge)
-    }
-    return Object.keys(src).includes(key)
-      ? (srcValue === undefined ? null : srcValue)
-      : objValue
-  })
-}
 
 // TODO:
 // - Hover states ✅
@@ -24,10 +13,25 @@ function merge(...objects) {
 // - Disabled states
 // - Color/size modifiers
 
+function merge(defaultOptions, userOptions) {
+  function mergeCustomizer(objValue, srcValue, key, obj, src, stack) {
+    if (isPlainObject(srcValue)) {
+      return mergeWith(objValue, srcValue, mergeCustomizer)
+    }
+    return Object.keys(src).includes(key)
+      // Convert undefined to null otherwise lodash won't replace the key
+      // PostCSS still omits properties with a null value so it behaves
+      // the same as undefined.
+      ? (srcValue === undefined ? null : srcValue)
+      : objValue
+  }
+
+  return mergeWith({}, defaultOptions, userOptions, mergeCustomizer)
+}
 
 module.exports = function ({ addUtilities, addComponents, theme }) {
   function addBaseComponents() {
-    addUtilities({
+    addComponents({
       '.form-input': {
         appearance: 'none',
       },
@@ -76,9 +80,9 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
 
   function addInput(options, modifier = '') {
     const {
-      placeholder,
-      hover: { placeholder: hoverPlaceholder, ...hover },
-      focus: { placeholder: focusPlaceholder, ...focus },
+      placeholder = {},
+      hover: { placeholder: hoverPlaceholder, ...hover } = {},
+      focus: { placeholder: focusPlaceholder, ...focus } = {},
       ...base
     } = options
 
@@ -106,9 +110,9 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
 
   function addTextarea(options, modifier = '') {
     const {
-      placeholder,
-      hover: { placeholder: hoverPlaceholder, ...hover },
-      focus: { placeholder: focusPlaceholder, ...focus },
+      placeholder = {},
+      hover: { placeholder: hoverPlaceholder, ...hover } = {},
+      focus: { placeholder: focusPlaceholder, ...focus } = {},
       ...base
     } = options
 
@@ -165,7 +169,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
 
     addComponents({
       [`.form-select${modifier}`]: {
-        backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`,
+          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
         ...base,
         '&::-ms-expand': {
           color: iconColor, // Chevron color
@@ -185,7 +189,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
 
   function addCheckbox(options, modifier = '') {
     const {
-      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked },
+      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked } = {},
       hover,
       focus,
       ...base
@@ -201,7 +205,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
           ...focus,
         },
         '&:checked': {
-          backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`,
+          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
           ...checked,
           '&:hover': {
             ...checkedHover,
@@ -221,7 +225,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
 
   function addRadio(options, modifier = '') {
     const {
-      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked },
+      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked } = {},
       hover,
       focus,
       ...base
@@ -237,7 +241,7 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
           ...focus,
         },
         '&:checked': {
-          backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`,
+          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
           ...checked,
           '&:hover': {
             ...checkedHover,
@@ -255,16 +259,27 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
     })
   }
 
-  addBaseComponents()
+  function registerComponents() {
+    addBaseComponents()
 
-  Object.keys(theme('customForms')).forEach(key => {
-    const modifier = key === 'default' ? '' : `-${key}`
+    addInput(merge(defaultOptions.input, theme(`customForms.default.input`, {})))
+    addTextarea(merge(defaultOptions.textarea, theme(`customForms.default.textarea`, {})))
+    addMultiselect(merge(defaultOptions.multiselect, theme(`customForms.default.multiselect`, {})))
+    addSelect(merge(defaultOptions.select, theme(`customForms.default.select`, {})))
+    addCheckbox(merge(defaultOptions.checkbox, theme(`customForms.default.checkbox`, {})))
+    addRadio(merge(defaultOptions.radio, theme(`customForms.default.radio`, {})))
 
-    addInput(merge(defaultOptions.input, theme(`customForms.${key}.input`, {})), modifier)
-    addTextarea(merge(defaultOptions.textarea, theme(`customForms.${key}.textarea`, {})), modifier)
-    addMultiselect(merge(defaultOptions.multiselect, theme(`customForms.${key}.multiselect`, {})), modifier)
-    addCheckbox(merge(defaultOptions.checkbox, theme(`customForms.${key}.checkbox`, {})), modifier)
-    addRadio(merge(defaultOptions.radio, theme(`customForms.${key}.radio`, {})), modifier)
-    addSelect(merge(defaultOptions.select, theme(`customForms.${key}.select`, {})), modifier)
-  })
+    Object.keys((({ default: _, ...rest }) => rest)(theme('customForms'))).forEach(key => {
+      const modifier = `-${key}`
+
+      addInput(theme(`customForms.${key}.input`, {}), modifier)
+      addTextarea(theme(`customForms.${key}.textarea`, {}), modifier)
+      addMultiselect(theme(`customForms.${key}.multiselect`, {}), modifier)
+      addSelect(theme(`customForms.${key}.select`, {}), modifier)
+      addCheckbox(theme(`customForms.${key}.checkbox`, {}), modifier)
+      addRadio(theme(`customForms.${key}.radio`, {}), modifier)
+    })
+  }
+
+  registerComponents()
 }
