@@ -41,6 +41,18 @@
               <span class="text-sm font-semibold text-gray-500">Search</span>
               <input class="mt-1 form-input block w-full" placeholder="Keywords">
             </label>
+            <label class="mt-4 block w-full px-2 sm:mt-0 sm:w-1/2 lg:mt-4 lg:w-full">
+              <span class="text-sm font-semibold text-gray-500">Long Form</span>
+              <textarea class="mt-1 form-textarea block w-full" placeholder="Some longer form text"></textarea>
+            </label>
+            <label class="mt-4 block w-full px-2 sm:mt-0 sm:w-1/2 lg:mt-4 lg:w-full">
+              <span class="text-sm font-semibold text-gray-500">Long Form</span>
+              <select class="mt-1 form-multiselect block w-full" multiple>
+                <option>Multiple</option>
+                <option>Options</option>
+                <option>Available</option>
+              </select>
+            </label>
           </div>
         </div>
         <div class="px-4 py-4 border-t border-gray-900 lg:w-1/3 lg:border-l xl:w-full">
