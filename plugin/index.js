@@ -13,6 +13,14 @@ const defaultOptions = require('./defaultOptions')
 // - Disabled states
 // - Color/size modifiers
 
+// TODO: Figure out how to do this well, maybe using traverse lib
+// on npm, want to walk object and replace icon with backgroundImage
+function mapValuesDeep(value, callback) {
+  return _.isObject(value)
+    ? _.mapValues(value, (v, k) => mapValuesDeep(v, callback))
+    : callback()
+}
+
 function merge(defaultOptions, userOptions) {
   function mergeCustomizer(objValue, srcValue, key, obj, src, stack) {
     if (isPlainObject(srcValue)) {
