@@ -1,17 +1,16 @@
-const svgToDataUri = require('mini-svg-data-uri')
-const mergeWith = require('lodash/mergeWith')
 const tap = require('lodash/tap')
+const map = require('lodash/map')
+const toPairs = require('lodash/toPairs')
+const fromPairs = require('lodash/fromPairs')
+const mergeWith = require('lodash/mergeWith')
 const isEmpty = require('lodash/isEmpty')
-const isUndefined = require('lodash/isUndefined')
-const isFunction = require('lodash/isFunction')
 const isArray = require('lodash/isArray')
+const isFunction = require('lodash/isFunction')
+const isUndefined = require('lodash/isUndefined')
 const isPlainObject = require('lodash/isPlainObject')
 const defaultOptions = require('./defaultOptions')
+const svgToDataUri = require('mini-svg-data-uri')
 const traverse = require('traverse')
-const _ = require('lodash')
-
-// TODO:
-// - Make multiselect look good by default
 
 function merge(...options) {
   function mergeCustomizer(objValue, srcValue, key, obj, src, stack) {
@@ -30,17 +29,15 @@ function merge(...options) {
 }
 
 function flattenOptions(options) {
-  return merge(..._(options).toPairs().flatMap(([keys, value]) => {
-    return _.fromPairs(keys.split(', ').map(key => [key, value]))
+  return merge(...toPairs(options).flatMap(([keys, value]) => {
+    return fromPairs(keys.split(', ').map(key => [key, value]))
   }))
 }
 
 function resolveOptions(userOptions) {
   return merge({
     default: defaultOptions,
-  }, _(userOptions).map((value, key) => {
-    return [key, flattenOptions(value)]
-  }).fromPairs().value())
+  }, fromPairs(map(userOptions, (value, key) => [key, flattenOptions(value)])))
 }
 
 function replaceIconDeclarations(component, defaultIcon) {
@@ -89,8 +86,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       return
     }
 
-    const defaultIcon = (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
-    const component = {
+    addComponents(replaceIconDeclarations({
       [`.form-select${modifier}`]: merge({
         '&::-ms-expand': {
           color: options.iconColor,
@@ -101,9 +97,9 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         },
       }, options)
-    }
-
-    addComponents(replaceIconDeclarations(component, defaultIcon))
+    }, iconColor => {
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
+    }))
   }
 
   function addCheckbox(options, modifier = '') {
@@ -111,8 +107,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       return
     }
 
-    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
-    const component = {
+    addComponents(replaceIconDeclarations({
       [`.form-checkbox${modifier}`]: merge({
         ...isUndefined(options.borderWidth) ? {} : {
           '&::-ms-check': {
@@ -122,9 +117,9 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         },
       }, options)
-    }
-
-    addComponents(replaceIconDeclarations(component, defaultIcon))
+    }, iconColor => {
+      return `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
+    }))
   }
 
   function addRadio(options, modifier = '') {
@@ -132,8 +127,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       return
     }
 
-    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
-    const component = {
+    addComponents(replaceIconDeclarations({
       [`.form-radio${modifier}`]: merge({
         ...isUndefined(options.borderWidth) ? {} : {
           '&::-ms-check': {
@@ -143,9 +137,9 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         },
       }, options)
-    }
-
-    addComponents(replaceIconDeclarations(component, defaultIcon))
+    }, iconColor => {
+      return `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
+    }))
   }
 
   function registerComponents() {
