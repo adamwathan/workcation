@@ -35,6 +35,14 @@ function flattenOptions(options) {
   }))
 }
 
+function resolveOptions(userOptions) {
+  return merge({
+    default: defaultOptions,
+  }, _(userOptions).map((value, key) => {
+    return [key, flattenOptions(value)]
+  }).fromPairs().value())
+}
+
 function replaceIconDeclarations(component, defaultIcon) {
   return traverse(component).map(function (value) {
     if (!isPlainObject(value)) {
@@ -52,64 +60,12 @@ function replaceIconDeclarations(component, defaultIcon) {
 }
 
 module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
-  function addBaseComponents() {
-    addComponents({
-      '.form-input': {
-        appearance: 'none',
-      },
-      '.form-textarea': {
-        appearance: 'none',
-      },
-      '.form-multiselect': {
-        appearance: 'none',
-      },
-      '.form-select': {
-        appearance: 'none',
-        colorAdjust: 'exact',
-        '&::-ms-expand': {
-          border: 'none', // The select padding is causing some whitespace around the chevron which looks weird with a border
-          '@media not print': {
-            display: 'none',
-          },
-        },
-      },
-      '.form-checkbox': {
-        appearance: 'none',
-        colorAdjust: 'exact',
-        '&::-ms-check': {
-          '@media not print': {
-            color: 'transparent', // Hide the check
-            background: 'inherit',
-            borderColor: 'inherit',
-            borderRadius: 'inherit',
-          }
-        },
-      },
-      '.form-radio': {
-        appearance: 'none',
-        colorAdjust: 'exact',
-        '&::-ms-check': {
-          '@media not print': {
-            color: 'transparent', // Hide the check
-            background: 'inherit',
-            borderColor: 'inherit',
-            borderRadius: 'inherit',
-          }
-        },
-      },
-    })
-  }
-
   function addInput(options, modifier = '') {
     if (isEmpty(options)) {
       return
     }
 
-    addComponents({
-      [`.form-input${modifier}`]: {
-        ...options,
-      },
-    })
+    addComponents({ [`.form-input${modifier}`]: options })
   }
 
   function addTextarea(options, modifier = '') {
@@ -117,11 +73,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       return
     }
 
-    addComponents({
-      [`.form-textarea${modifier}`]: {
-        ...options,
-      },
-    })
+    addComponents({ [`.form-textarea${modifier}`]: options })
   }
 
   function addMultiselect(options, modifier = '') {
@@ -129,11 +81,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       return
     }
 
-    addComponents({
-      [`.form-multiselect${modifier}`]: {
-        ...options,
-      },
-    })
+    addComponents({ [`.form-multiselect${modifier}`]: options })
   }
 
   function addSelect(options, modifier = '') {
@@ -143,18 +91,16 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
 
     const defaultIcon = (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
     const component = {
-      [`.form-select${modifier}`]: {
-        ...merge({
-          '&::-ms-expand': {
-            color: options.iconColor,
+      [`.form-select${modifier}`]: merge({
+        '&::-ms-expand': {
+          color: options.iconColor,
+        },
+        ...isUndefined(options.paddingLeft) ? {} : {
+          '@media print and (-ms-high-contrast: active), print and (-ms-high-contrast: none)': {
+            paddingRight: options.paddingLeft, // Fix padding for print in IE
           },
-          ...isUndefined(options.paddingLeft) ? {} : {
-            '@media print and (-ms-high-contrast: active), print and (-ms-high-contrast: none)': {
-              paddingRight: options.paddingLeft, // Fix padding for print in IE
-            },
-          },
-        }, options)
-      },
+        },
+      }, options)
     }
 
     addComponents(replaceIconDeclarations(component, defaultIcon))
@@ -167,17 +113,15 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
 
     const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
     const component = {
-      [`.form-checkbox${modifier}`]: {
-        ...merge({
-          ...isUndefined(options.borderWidth) ? {} : {
-            '&::-ms-check': {
-              '@media not print': {
-                borderWidth: options.borderWidth,
-              }
-            },
+      [`.form-checkbox${modifier}`]: merge({
+        ...isUndefined(options.borderWidth) ? {} : {
+          '&::-ms-check': {
+            '@media not print': {
+              borderWidth: options.borderWidth,
+            }
           },
-        }, options)
-      },
+        },
+      }, options)
     }
 
     addComponents(replaceIconDeclarations(component, defaultIcon))
@@ -190,56 +134,39 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
 
     const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
     const component = {
-      [`.form-radio${modifier}`]: {
-        ...merge({
-          ...isUndefined(options.borderWidth) ? {} : {
-            '&::-ms-check': {
-              '@media not print': {
-                borderWidth: options.borderWidth,
-              }
-            },
+      [`.form-radio${modifier}`]: merge({
+        ...isUndefined(options.borderWidth) ? {} : {
+          '&::-ms-check': {
+            '@media not print': {
+              borderWidth: options.borderWidth,
+            }
           },
-        }, options)
-      },
+        },
+      }, options)
     }
 
     addComponents(replaceIconDeclarations(component, defaultIcon))
   }
 
   function registerComponents() {
-    addBaseComponents()
+    const options = resolveOptions(theme('customForms'))
 
-    const userOptions = {
-      default: {},
-      ..._(theme('customForms')).map((value, key) => {
-        return [key, {
-          input: {},
-          textarea: {},
-          multiselect: {},
-          select: {},
-          checkbox: {},
-          radio: {},
-          ...flattenOptions(value),
-        }]
-      }).fromPairs().value()
-    }
+    addInput(options.default.input)
+    addTextarea(options.default.textarea)
+    addMultiselect(options.default.multiselect)
+    addSelect(options.default.select)
+    addCheckbox(options.default.checkbox)
+    addRadio(options.default.radio)
 
-    addInput(merge(defaultOptions.input, userOptions.default.input))
-    addTextarea(merge(defaultOptions.textarea, userOptions.default.textarea))
-    addMultiselect(merge(defaultOptions.multiselect, userOptions.default.multiselect))
-    addSelect(merge(defaultOptions.select, userOptions.default.select))
-    addCheckbox(merge(defaultOptions.checkbox, userOptions.default.checkbox))
-    addRadio(merge(defaultOptions.radio, userOptions.default.radio))
-
-    Object.keys((({ default: _default, ...rest }) => rest)(userOptions)).forEach(key => {
+    Object.keys((({ default: _default, ...rest }) => rest)(options)).forEach(key => {
       const modifier = `-${key}`
 
-      addInput(userOptions[key].input, modifier)
-      addTextarea(userOptions[key].textarea, modifier)
-      addMultiselect(userOptions[key].multiselect, modifier)
-      addSelect(userOptions[key].select, modifier)
-      addCheckbox(userOptions[key].checkbox, modifier)
-      addRadio(userOptions[key].radio, modifier)
+      addInput(options[key].input || {}, modifier)
+      addTextarea(options[key].textarea || {}, modifier)
+      addMultiselect(options[key].multiselect || {}, modifier)
+      addSelect(options[key].select || {}, modifier)
+      addCheckbox(options[key].checkbox || {}, modifier)
+      addRadio(options[key].radio || {}, modifier)
     })
   }
 
