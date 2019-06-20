@@ -12,6 +12,7 @@
     "core-js": "^2.6.5",
     "lodash": "^4.17.11",
     "tailwindcss": "^1.0.4",
+    "traverse": "^0.6.6",
     "vue": "^2.6.10"
   },
   "devDependencies": {

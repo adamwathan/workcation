@@ -7,6 +7,7 @@ const isArray = require('lodash/isArray')
 const isPlainObject = require('lodash/isPlainObject')
 const defaultOptions = require('./defaultOptions')
 const parseObjectStyles = require('tailwindcss/lib/util/parseObjectStyles').default
+const traverse = require('traverse')
 
 // TODO:
 // - Make multiselect look good by default
@@ -115,9 +116,7 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   function addSelect(options, modifier = '') {
-    // backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`
-
-    collectComponents({
+    const component = {
       [`.form-select${modifier}`]: {
         ...merge({
           '&::-ms-expand': {
@@ -130,11 +129,30 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         }, options)
       },
+    }
+
+    const defaultIcon = (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
+
+    traverse(component).forEach(function (value) {
+      if (!isPlainObject(value)) {
+        return
+      }
+
+      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
+        const { iconColor, icon, ...rest } = value
+        this.update({
+          ...rest,
+          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
+        })
+      }
     })
+
+    console.log(component)
+    collectComponents(component)
   }
 
   function addCheckbox(options, modifier = '') {
-    collectComponents({
+    const component = {
       [`.form-checkbox${modifier}`]: {
         ...merge({
           ...isUndefined(options.borderWidth) ? {} : {
@@ -146,11 +164,30 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         }, options)
       },
+    }
+
+    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
+
+    traverse(component).forEach(function (value) {
+      if (!isPlainObject(value)) {
+        return
+      }
+
+      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
+        const { iconColor, icon, ...rest } = value
+        this.update({
+          ...rest,
+          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
+        })
+      }
     })
+
+    console.log(component)
+    collectComponents(component)
   }
 
   function addRadio(options, modifier = '') {
-    collectComponents({
+    const component = {
       [`.form-radio${modifier}`]: {
         ...merge({
           ...isUndefined(options.borderWidth) ? {} : {
@@ -162,7 +199,26 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
           },
         }, options)
       },
+    }
+
+    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
+
+    traverse(component).forEach(function (value) {
+      if (!isPlainObject(value)) {
+        return
+      }
+
+      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
+        const { iconColor, icon, ...rest } = value
+        this.update({
+          ...rest,
+          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
+        })
+      }
     })
+
+    console.log(component)
+    collectComponents(component)
   }
 
   function registerComponents() {
@@ -188,8 +244,5 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   registerComponents()
-
-  addComponents(tap(postcss.root({ nodes: parseObjectStyles(components) }), css => {
-
-  }))
+  addComponents(components)
 }
