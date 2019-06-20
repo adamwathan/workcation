@@ -17,10 +17,10 @@ module.exports = {
           backgroundColor: theme('colors.gray.900'),
           borderColor: 'transparent',
           borderRadius: theme('borderRadius.lg'),
-          placeholder: {
+          '&::placeholder': {
             color: theme('colors.gray.600'),
           },
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             color: theme('colors.gray.900'),
@@ -29,7 +29,7 @@ module.exports = {
               color: theme('colors.gray.500'),
             },
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
         },
@@ -43,7 +43,7 @@ module.exports = {
           placeholder: {
             color: theme('colors.gray.600'),
           },
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             color: theme('colors.gray.900'),
@@ -52,7 +52,7 @@ module.exports = {
               color: theme('colors.gray.500'),
             },
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
         },
@@ -66,7 +66,7 @@ module.exports = {
           placeholder: {
             color: theme('colors.gray.600'),
           },
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             color: theme('colors.gray.900'),
@@ -75,7 +75,7 @@ module.exports = {
               color: theme('colors.gray.500'),
             },
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
         },
@@ -88,12 +88,12 @@ module.exports = {
           borderRadius: theme('borderRadius.lg'),
           boxShadow: theme('boxShadow.default'),
           iconColor: '#fff',
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             backgroundColor: theme('colors.gray.600'),
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
         },
@@ -103,19 +103,19 @@ module.exports = {
           borderColor: 'transparent',
           height: '1.5em',
           width: '1.5em',
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             backgroundColor: theme('colors.gray.700'),
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
-          checked: {
+          '&:checked': {
             iconColor: '#fff',
             backgroundColor: theme('colors.indigo.500'),
             borderColor: 'transparent',
-            focus: {
+            '&:focus': {
               backgroundColor: theme('colors.indigo.400'),
             }
           }
@@ -126,19 +126,19 @@ module.exports = {
           borderColor: 'transparent',
           height: '1.5em',
           width: '1.5em',
-          focus: {
+          '&:focus': {
             borderColor: undefined,
             boxShadow: undefined,
             backgroundColor: theme('colors.gray.700'),
           },
-          hover: {
+          '&:hover': {
             borderColor: theme('colors.red.600'),
           },
-          checked: {
+          '&:checked': {
             iconColor: '#fff',
             backgroundColor: theme('colors.indigo.500'),
             borderColor: 'transparent',
-            focus: {
+            '&:focus': {
               backgroundColor: theme('colors.indigo.400'),
             }
           }
@@ -151,7 +151,7 @@ module.exports = {
           placeholder: {
             color: theme('colors.gray.500'),
           },
-          focus: {
+          '&:focus': {
             borderColor: theme('colors.blue.400'),
             boxShadow: theme('boxShadow.outline'),
             placeholder: {

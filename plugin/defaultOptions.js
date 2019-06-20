@@ -2,7 +2,6 @@ const defaultTheme = require('tailwindcss/resolveConfig')(require('tailwindcss/d
 
 module.exports = {
   input: {
-    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -13,19 +12,17 @@ module.exports = {
     paddingLeft: defaultTheme.spacing[3],
     fontSize: defaultTheme.fontSize.base,
     lineHeight: defaultTheme.lineHeight.normal,
-    placeholder: {
+    '&::placeholder': {
       color: defaultTheme.colors.gray[500],
       opacity: '1',
     },
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
   },
   textarea: {
-    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -36,19 +33,17 @@ module.exports = {
     paddingLeft: defaultTheme.spacing[3],
     fontSize: defaultTheme.fontSize.base,
     lineHeight: defaultTheme.lineHeight.normal,
-    placeholder: {
+    '&::placeholder': {
       color: defaultTheme.colors.gray[500],
       opacity: '1',
     },
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
   },
   multiselect: {
-    // appearance: 'none',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
@@ -59,16 +54,13 @@ module.exports = {
     paddingLeft: defaultTheme.spacing[3],
     fontSize: defaultTheme.fontSize.base,
     lineHeight: defaultTheme.lineHeight.normal,
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
   },
   select: {
-    // appearance: 'none',
-    // colorAdjust: 'exact',
     backgroundRepeat: 'no-repeat',
     backgroundColor: defaultTheme.colors.white,
     borderColor: defaultTheme.borderColor.default,
@@ -81,19 +73,16 @@ module.exports = {
     fontSize: defaultTheme.fontSize.base,
     lineHeight: defaultTheme.lineHeight.normal,
     iconColor: defaultTheme.colors.gray[500],
-    icon: (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`,
+    // icon: (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`,
     backgroundPosition: `right ${defaultTheme.spacing[2]} center`,
     backgroundSize: `1.5em 1.5em`,
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
   },
   checkbox: {
-    // appearance: 'none',
-    // colorAdjust: 'exact',
     display: 'inline-block',
     verticalAlign: 'middle',
     backgroundOrigin: 'border-box',
@@ -105,25 +94,22 @@ module.exports = {
     borderWidth: defaultTheme.borderWidth.default,
     borderRadius: defaultTheme.borderRadius.default,
     backgroundColor: defaultTheme.colors.white,
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
-    checked: {
+    '&:checked': {
       backgroundColor: defaultTheme.colors.blue[500],
       borderColor: defaultTheme.colors.blue[500],
       backgroundSize: '100% 100%',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       iconColor: defaultTheme.colors.white,
-      icon: (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`,
+      // icon: (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`,
     },
   },
   radio: {
-    // appearance: 'none',
-    // colorAdjust: 'exact',
     display: 'inline-block',
     verticalAlign: 'middle',
     backgroundOrigin: 'border-box',
@@ -135,20 +121,19 @@ module.exports = {
     borderColor: defaultTheme.borderColor.default,
     borderWidth: defaultTheme.borderWidth.default,
     backgroundColor: defaultTheme.colors.white,
-    focus: {
+    '&:focus': {
       outline: 'none',
       boxShadow: defaultTheme.boxShadow.outline,
       borderColor: defaultTheme.colors.blue[400],
     },
-    hover: {},
-    checked: {
+    '&:checked': {
       backgroundColor: defaultTheme.colors.blue[500],
       borderColor: defaultTheme.colors.blue[500],
       backgroundSize: '100% 100%',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
       iconColor: defaultTheme.colors.white,
-      icon: (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`,
+      // icon: (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`,
     },
   }
 }

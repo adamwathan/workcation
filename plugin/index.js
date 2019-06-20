@@ -1,17 +1,15 @@
 const svgToDataUri = require('mini-svg-data-uri')
 const mergeWith = require('lodash/mergeWith')
+const tap = require('lodash/tap')
 const isUndefined = require('lodash/isUndefined')
 const isFunction = require('lodash/isFunction')
 const isArray = require('lodash/isArray')
 const isPlainObject = require('lodash/isPlainObject')
 const defaultOptions = require('./defaultOptions')
+const parseObjectStyles = require('tailwindcss/lib/util/parseObjectStyles').default
 
 // TODO:
-// - Hover states ✅
-// - Active states
 // - Make multiselect look good by default
-// - Disabled states
-// - Color/size modifiers
 
 // TODO: Figure out how to do this well, maybe using traverse lib
 // on npm, want to walk object and replace icon with backgroundImage
@@ -37,9 +35,15 @@ function merge(defaultOptions, userOptions) {
   return mergeWith({}, defaultOptions, userOptions, mergeCustomizer)
 }
 
-module.exports = function ({ addUtilities, addComponents, theme }) {
+module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
+  const components = []
+
+  const collectComponents = (newComponents) => {
+    components.push(newComponents)
+  }
+
   function addBaseComponents() {
-    addComponents({
+    collectComponents({
       '.form-input': {
         appearance: 'none',
       },
@@ -87,182 +91,76 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
   }
 
   function addInput(options, modifier = '') {
-    const {
-      placeholder = {},
-      hover: { placeholder: hoverPlaceholder, ...hover } = {},
-      focus: { placeholder: focusPlaceholder, ...focus } = {},
-      ...base
-    } = options
-
-    addComponents({
+    collectComponents({
       [`.form-input${modifier}`]: {
-        ...base,
-        '&::placeholder': {
-          ...placeholder,
-        },
-        '&:hover': {
-          ...hover,
-        },
-        '&:hover::placeholder': {
-          ...hoverPlaceholder,
-        },
-        '&:focus': {
-          ...focus,
-        },
-        '&:focus::placeholder': {
-          ...focusPlaceholder,
-        },
+        ...options,
       },
     })
   }
 
   function addTextarea(options, modifier = '') {
-    const {
-      placeholder = {},
-      hover: { placeholder: hoverPlaceholder, ...hover } = {},
-      focus: { placeholder: focusPlaceholder, ...focus } = {},
-      ...base
-    } = options
-
-    addComponents({
+    collectComponents({
       [`.form-textarea${modifier}`]: {
-        ...base,
-        '&::placeholder': {
-          ...placeholder,
-        },
-        '&:hover': {
-          ...hover,
-        },
-        '&:hover::placeholder': {
-          ...hoverPlaceholder,
-        },
-        '&:focus': {
-          ...focus,
-        },
-        '&:focus::placeholder': {
-          ...focusPlaceholder,
-        },
+        ...options,
       },
     })
   }
 
   function addMultiselect(options, modifier = '') {
-    const {
-      hover,
-      focus,
-      ...base
-    } = options
-
-    addComponents({
+    collectComponents({
       [`.form-multiselect${modifier}`]: {
-        ...base,
-        '&:hover': {
-          ...hover,
-        },
-        '&:focus': {
-          ...focus,
-        },
+        ...options,
       },
     })
   }
 
   function addSelect(options, modifier = '') {
-    const {
-      icon,
-      iconColor,
-      hover,
-      focus,
-      ...base
-    } = options
+    // backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")`
 
-    addComponents({
+    collectComponents({
       [`.form-select${modifier}`]: {
-          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
-        ...base,
-        '&::-ms-expand': {
-          color: iconColor, // Chevron color
-        },
-        '@media print and (-ms-high-contrast: active), print and (-ms-high-contrast: none)': {
-          paddingRight: base.paddingLeft, // Fix padding for print in IE
-        },
-        '&:hover': {
-          ...hover,
-        },
-        '&:focus': {
-          ...focus,
-        },
+        ...merge({
+          '&::-ms-expand': {
+            color: options.iconColor,
+          },
+          ...isUndefined(options.paddingLeft) ? {} : {
+            '@media print and (-ms-high-contrast: active), print and (-ms-high-contrast: none)': {
+              paddingRight: options.paddingLeft, // Fix padding for print in IE
+            },
+          },
+        }, options)
       },
     })
   }
 
   function addCheckbox(options, modifier = '') {
-    const {
-      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked } = {},
-      hover,
-      focus,
-      ...base
-    } = options
-
-    addComponents({
+    collectComponents({
       [`.form-checkbox${modifier}`]: {
-        ...base,
-        '&:hover': {
-          ...hover,
-        },
-        '&:focus': {
-          ...focus,
-        },
-        '&:checked': {
-          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
-          ...checked,
-          '&:hover': {
-            ...checkedHover,
+        ...merge({
+          ...isUndefined(options.borderWidth) ? {} : {
+            '&::-ms-check': {
+              '@media not print': {
+                borderWidth: options.borderWidth,
+              }
+            },
           },
-          '&:focus': {
-            ...checkedFocus,
-          }
-        },
-        '&::-ms-check': {
-          '@media not print': {
-            borderWidth: base.borderWidth,
-          }
-        },
+        }, options)
       },
     })
   }
 
   function addRadio(options, modifier = '') {
-    const {
-      checked: { focus: checkedFocus, hover: checkedHover, icon, iconColor, ...checked } = {},
-      hover,
-      focus,
-      ...base
-    } = options
-
-    addComponents({
+    collectComponents({
       [`.form-radio${modifier}`]: {
-        ...base,
-        '&:hover': {
-          ...hover,
-        },
-        '&:focus': {
-          ...focus,
-        },
-        '&:checked': {
-          ...isUndefined(icon) ? {} : { backgroundImage: `url("${svgToDataUri(isFunction(icon) ? icon(iconColor) : icon)}")` },
-          ...checked,
-          '&:hover': {
-            ...checkedHover,
+        ...merge({
+          ...isUndefined(options.borderWidth) ? {} : {
+            '&::-ms-check': {
+              '@media not print': {
+                borderWidth: options.borderWidth,
+              }
+            },
           },
-          '&:focus': {
-            ...checkedFocus,
-          }
-        },
-        '&::-ms-check': {
-          '@media not print': {
-            borderWidth: base.borderWidth,
-          }
-        },
+        }, options)
       },
     })
   }
@@ -290,4 +188,8 @@ module.exports = function ({ addUtilities, addComponents, theme }) {
   }
 
   registerComponents()
+
+  addComponents(tap(postcss.root({ nodes: parseObjectStyles(components) }), css => {
+
+  }))
 }
