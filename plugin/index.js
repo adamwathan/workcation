@@ -1,26 +1,19 @@
 const svgToDataUri = require('mini-svg-data-uri')
 const mergeWith = require('lodash/mergeWith')
 const tap = require('lodash/tap')
+const isEmpty = require('lodash/isEmpty')
 const isUndefined = require('lodash/isUndefined')
 const isFunction = require('lodash/isFunction')
 const isArray = require('lodash/isArray')
 const isPlainObject = require('lodash/isPlainObject')
 const defaultOptions = require('./defaultOptions')
-const parseObjectStyles = require('tailwindcss/lib/util/parseObjectStyles').default
 const traverse = require('traverse')
+const _ = require('lodash')
 
 // TODO:
 // - Make multiselect look good by default
 
-// TODO: Figure out how to do this well, maybe using traverse lib
-// on npm, want to walk object and replace icon with backgroundImage
-function mapValuesDeep(value, callback) {
-  return _.isObject(value)
-    ? _.mapValues(value, (v, k) => mapValuesDeep(v, callback))
-    : callback()
-}
-
-function merge(defaultOptions, userOptions) {
+function merge(...options) {
   function mergeCustomizer(objValue, srcValue, key, obj, src, stack) {
     if (isPlainObject(srcValue)) {
       return mergeWith(objValue, srcValue, mergeCustomizer)
@@ -33,18 +26,34 @@ function merge(defaultOptions, userOptions) {
       : objValue
   }
 
-  return mergeWith({}, defaultOptions, userOptions, mergeCustomizer)
+  return mergeWith({}, ...options, mergeCustomizer)
+}
+
+function flattenOptions(options) {
+  return merge(..._(options).toPairs().flatMap(([keys, value]) => {
+    return _.fromPairs(keys.split(', ').map(key => [key, value]))
+  }))
+}
+
+function replaceIconDeclarations(component, defaultIcon) {
+  return traverse(component).map(function (value) {
+    if (!isPlainObject(value)) {
+      return
+    }
+
+    if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
+      const { iconColor, icon, ...rest } = value
+      this.update({
+        ...rest,
+        backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
+      })
+    }
+  })
 }
 
 module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
-  const components = []
-
-  const collectComponents = (newComponents) => {
-    components.push(newComponents)
-  }
-
   function addBaseComponents() {
-    collectComponents({
+    addComponents({
       '.form-input': {
         appearance: 'none',
       },
@@ -92,7 +101,11 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   function addInput(options, modifier = '') {
-    collectComponents({
+    if (isEmpty(options)) {
+      return
+    }
+
+    addComponents({
       [`.form-input${modifier}`]: {
         ...options,
       },
@@ -100,7 +113,11 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   function addTextarea(options, modifier = '') {
-    collectComponents({
+    if (isEmpty(options)) {
+      return
+    }
+
+    addComponents({
       [`.form-textarea${modifier}`]: {
         ...options,
       },
@@ -108,7 +125,11 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   function addMultiselect(options, modifier = '') {
-    collectComponents({
+    if (isEmpty(options)) {
+      return
+    }
+
+    addComponents({
       [`.form-multiselect${modifier}`]: {
         ...options,
       },
@@ -116,6 +137,11 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
   }
 
   function addSelect(options, modifier = '') {
+    if (isEmpty(options)) {
+      return
+    }
+
+    const defaultIcon = (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
     const component = {
       [`.form-select${modifier}`]: {
         ...merge({
@@ -131,27 +157,15 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       },
     }
 
-    const defaultIcon = (iconColor) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${iconColor}"><path d="M15.3 9.3a1 1 0 0 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l3.3 3.29 3.3-3.3z"/></svg>`
-
-    traverse(component).forEach(function (value) {
-      if (!isPlainObject(value)) {
-        return
-      }
-
-      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
-        const { iconColor, icon, ...rest } = value
-        this.update({
-          ...rest,
-          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
-        })
-      }
-    })
-
-    console.log(component)
-    collectComponents(component)
+    addComponents(replaceIconDeclarations(component, defaultIcon))
   }
 
   function addCheckbox(options, modifier = '') {
+    if (isEmpty(options)) {
+      return
+    }
+
+    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
     const component = {
       [`.form-checkbox${modifier}`]: {
         ...merge({
@@ -166,27 +180,15 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       },
     }
 
-    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><path d="M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z"/></svg>`
-
-    traverse(component).forEach(function (value) {
-      if (!isPlainObject(value)) {
-        return
-      }
-
-      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
-        const { iconColor, icon, ...rest } = value
-        this.update({
-          ...rest,
-          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
-        })
-      }
-    })
-
-    console.log(component)
-    collectComponents(component)
+    addComponents(replaceIconDeclarations(component, defaultIcon))
   }
 
   function addRadio(options, modifier = '') {
+    if (isEmpty(options)) {
+      return
+    }
+
+    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
     const component = {
       [`.form-radio${modifier}`]: {
         ...merge({
@@ -201,48 +203,45 @@ module.exports = function ({ addUtilities, addComponents, theme, postcss }) {
       },
     }
 
-    const defaultIcon = (iconColor) => `<svg viewBox="0 0 16 16" fill="${iconColor}" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3"/></svg>`
-
-    traverse(component).forEach(function (value) {
-      if (!isPlainObject(value)) {
-        return
-      }
-
-      if (Object.keys(value).includes('iconColor') || Object.keys(value).includes('icon')) {
-        const { iconColor, icon, ...rest } = value
-        this.update({
-          ...rest,
-          backgroundImage: `url("${svgToDataUri(isUndefined(icon) ? defaultIcon(iconColor) : (isFunction(icon) ? icon(iconColor) : icon))}")`
-        })
-      }
-    })
-
-    console.log(component)
-    collectComponents(component)
+    addComponents(replaceIconDeclarations(component, defaultIcon))
   }
 
   function registerComponents() {
     addBaseComponents()
 
-    addInput(merge(defaultOptions.input, theme(`customForms.default.input`, {})))
-    addTextarea(merge(defaultOptions.textarea, theme(`customForms.default.textarea`, {})))
-    addMultiselect(merge(defaultOptions.multiselect, theme(`customForms.default.multiselect`, {})))
-    addSelect(merge(defaultOptions.select, theme(`customForms.default.select`, {})))
-    addCheckbox(merge(defaultOptions.checkbox, theme(`customForms.default.checkbox`, {})))
-    addRadio(merge(defaultOptions.radio, theme(`customForms.default.radio`, {})))
+    const userOptions = {
+      default: {},
+      ..._(theme('customForms')).map((value, key) => {
+        return [key, {
+          input: {},
+          textarea: {},
+          multiselect: {},
+          select: {},
+          checkbox: {},
+          radio: {},
+          ...flattenOptions(value),
+        }]
+      }).fromPairs().value()
+    }
 
-    Object.keys((({ default: _, ...rest }) => rest)(theme('customForms'))).forEach(key => {
+    addInput(merge(defaultOptions.input, userOptions.default.input))
+    addTextarea(merge(defaultOptions.textarea, userOptions.default.textarea))
+    addMultiselect(merge(defaultOptions.multiselect, userOptions.default.multiselect))
+    addSelect(merge(defaultOptions.select, userOptions.default.select))
+    addCheckbox(merge(defaultOptions.checkbox, userOptions.default.checkbox))
+    addRadio(merge(defaultOptions.radio, userOptions.default.radio))
+
+    Object.keys((({ default: _default, ...rest }) => rest)(userOptions)).forEach(key => {
       const modifier = `-${key}`
 
-      addInput(theme(`customForms.${key}.input`, {}), modifier)
-      addTextarea(theme(`customForms.${key}.textarea`, {}), modifier)
-      addMultiselect(theme(`customForms.${key}.multiselect`, {}), modifier)
-      addSelect(theme(`customForms.${key}.select`, {}), modifier)
-      addCheckbox(theme(`customForms.${key}.checkbox`, {}), modifier)
-      addRadio(theme(`customForms.${key}.radio`, {}), modifier)
+      addInput(userOptions[key].input, modifier)
+      addTextarea(userOptions[key].textarea, modifier)
+      addMultiselect(userOptions[key].multiselect, modifier)
+      addSelect(userOptions[key].select, modifier)
+      addCheckbox(userOptions[key].checkbox, modifier)
+      addRadio(userOptions[key].radio, modifier)
     })
   }
 
   registerComponents()
-  addComponents(components)
 }

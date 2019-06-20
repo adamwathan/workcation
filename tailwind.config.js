@@ -11,7 +11,8 @@ module.exports = {
     },
     customForms: theme => ({
       default: {
-        input: {
+        'input, textarea': {
+          foo: 'bar',
           lineHeight: theme('lineHeight.snug'),
           color: theme('colors.white'),
           backgroundColor: theme('colors.gray.900'),
