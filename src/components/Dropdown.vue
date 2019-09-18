@@ -4,7 +4,7 @@
       <slot name="trigger" :hasFocus="buttonHasFocus" :isOpen="isOpen"></slot>
     </button>
     <div :class="[isOpen ? 'block' : 'hidden']">
-      <button @click="isOpen = false" type="button" class="z-30 block fixed inset-0 w-full h-full cursor-default"></button>
+      <button @click="isOpen = false" type="button" class="z-30 block fixed inset-0 w-full h-full cursor-default focus:outline-none"></button>
       <div class="absolute z-40 right-0">
         <slot name="dropdown"></slot>
       </div>
